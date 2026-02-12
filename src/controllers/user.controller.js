@@ -1,4 +1,5 @@
 import Profile from "../models/profile.model.js";
+import User from "../models/user.model.js";
 
 export const profile = async (req, res) => {
   const { yourName, crushName, firstHobby, secondHobby, thirdHobby } = req.body;
@@ -62,4 +63,24 @@ export const profile = async (req, res) => {
     console.log('Error in user controller', error);
     res.status(500).json({ message: 'Internal server error' });
   }
+}
+
+export const confess = async (req, res) => {
+  const { username } = req.params;
+
+  // Find the user by username
+  const user = await User.findOne({ username }); // username: req.params.username
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  // Get the profile when _id matches with user._id
+  const profile = await Profile.findOne({ _id: user._id });
+  if (!profile) return res.status(404).json({ message: 'Profile not found' });
+
+  res.status(201).json({
+    yourName: profile.yourName,
+    crushName: profile.crushName,
+    firstHobby: profile.firstHobby,
+    secondHobby: profile.secondHobby,
+    thirdHobby: profile.thirdHobby
+  });
 }
