@@ -8,9 +8,22 @@ export const signup = async (req, res) => {
       return res.status(400).json({message: 'All fields are required' });
     }
 
+    // Check if username is greater than 3 characters
+    if (username.length < 3) {
+      return res.status(400).json({ message: 'Username must be at least 3 characters' });
+    }
+
+    // Check if username is valid: regex
+    const usernameRegex = /^[a-z0-9._]+$/;
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({ message: 'Usernames can only contain lowercase letters, numbers, underscores and periods' });
+    }
+
+    // Check if username already exists
     const user = await User.findOne({ username });
     if (user) return res.status(400).json({ message: 'This username is not available' });
 
+    // Check if password is greater than 8 characters
     if (password.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters' });
     }
