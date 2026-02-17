@@ -44,29 +44,29 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = new User({
+    const newUser = new User({
       fullName,
       username,
       email,
       password: hashedPassword
     });
 
-    if (!user) return res.status(400).json({ message: 'Invalid user data' });
+    if (!newUser) return res.status(400).json({ message: 'Invalid user data' });
 
-    await user.save();
+    await newUser.save();
 
     const payload = {
-      fullName: user.fullName,
-      username: user.username,
-      email: user.email
+      fullName: newUser.fullName,
+      username: newUser.username,
+      email: newUser.email
     }
 
     generateToken(payload, res);
 
     res.status(201).json({
-      fullName: user.fullName,
-      username: user.username,
-      email: user.email
+      fullName: newUser.fullName,
+      username: newUser.username,
+      email: newUser.email
     });
 
   } catch (error) {

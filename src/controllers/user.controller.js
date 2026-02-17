@@ -1,11 +1,11 @@
 import Profile from "../models/profile.model.js";
 import User from "../models/user.model.js";
 
-export const profile = async (req, res) => {
-  const { yourName, crushName, firstHobby, secondHobby, thirdHobby } = req.body;
+export const userProfile = async (req, res) => {
+  const { yourName, crushName, relationshipType, firstHobby, secondHobby, thirdHobby, message } = req.body;
 
   try {
-    if (!yourName || !crushName || !firstHobby || !secondHobby || !thirdHobby) {
+    if (!yourName || !crushName || !relationshipType || !firstHobby || !secondHobby || !thirdHobby || !message) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -23,18 +23,22 @@ export const profile = async (req, res) => {
       // Update existing profile
       profile.yourName = yourName;
       profile.crushName = crushName;
+      profile.relationshipType = relationshipType;
       profile.firstHobby = firstHobby;
       profile.secondHobby = secondHobby;
       profile.thirdHobby = thirdHobby;
+      profile.message = message;
 
       await profile.save();
 
       res.status(200).json({
         yourName: profile.yourName,
         crushName: profile.crushName,
+        relationshipType: profile.relationshipType,
         firstHobby: profile.firstHobby,
         secondHobby: profile.secondHobby,
-        thirdHobby: profile.thirdHobby
+        thirdHobby: profile.thirdHobby,
+        message: profile.message
       });
 
     } else {
@@ -43,9 +47,11 @@ export const profile = async (req, res) => {
         _id: user._id,
         yourName,
         crushName,
+        relationshipType,
         firstHobby,
         secondHobby,
-        thirdHobby
+        thirdHobby,
+        message
       });
 
       await newProfile.save();
@@ -53,9 +59,11 @@ export const profile = async (req, res) => {
       res.status(201).json({
         yourName: newProfile.yourName,
         crushName: newProfile.crushName,
+        relationshipType: profile.relationshipType,
         firstHobby: newProfile.firstHobby,
         secondHobby: newProfile.secondHobby,
-        thirdHobby: newProfile.thirdHobby
+        thirdHobby: newProfile.thirdHobby,
+        message: newProfile.message
       });
     }
 
