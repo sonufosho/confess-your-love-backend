@@ -101,8 +101,10 @@ export const confess = async (req, res) => {
   res.status(201).json({
     yourName: profile.yourName,
     crushName: profile.crushName,
+    relationshipType: profile.relationshipType,
     firstHobby: profile.firstHobby,
     secondHobby: profile.secondHobby,
-    thirdHobby: profile.thirdHobby
+    thirdHobby: profile.thirdHobby,
+    message: profile.message
   });
 }
