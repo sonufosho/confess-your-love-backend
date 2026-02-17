@@ -2,6 +2,20 @@ import Profile from "../models/profile.model.js";
 import User from "../models/user.model.js";
 
 export const userProfile = async (req, res) => {
+  const { username } = req.params;
+
+  const user = req.user;
+  
+  if (user.username !== username) return res.status(404).json({ message: 'User not found' });
+
+  res.status(200).json({
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email
+  });
+}
+
+export const updateProfile = async (req, res) => {
   const { yourName, crushName, relationshipType, firstHobby, secondHobby, thirdHobby, message } = req.body;
 
   try {
