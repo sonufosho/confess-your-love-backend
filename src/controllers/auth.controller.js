@@ -2,11 +2,11 @@ import bcrypt from 'bcrypt';
 import User from "../models/user.model.js";
 import generateToken from '../utils/generateToken.js';
 
-export const signup = async (req, res) => {
-  const { fullName, username, password } = req.body;
+export const registerUser = async (req, res) => {
+  const { fullName, username, email, password } = req.body;
 
   try {
-    if (!fullName || !username || !password) {
+    if (!fullName || !username || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -22,8 +22,18 @@ export const signup = async (req, res) => {
     }
 
     // Check if username already exists
-    const user = await User.findOne({ username });
-    if (user) return res.status(400).json({ message: 'This username is not available' });
+    const findUsername = await User.findOne({ username });
+    if (findUsername) return res.status(400).json({ message: 'This username is not available' });
+
+    // Check if email is valid: regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    // Check if email already exists
+    const findEmail = await User.findOne({ email });
+    if (findEmail) return res.status(400).json({ message: 'This email already exists' });
 
     // Check if password is greater than 8 characters
     if (password.length < 8) {
@@ -34,26 +44,30 @@ export const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({
+    const user = new User({
       fullName,
       username,
+      email,
       password: hashedPassword
     });
 
-    if (newUser) {
-      await newUser.save();
+    if (!user) return res.status(400).json({ message: 'Invalid user data' });
 
-      generateToken(newUser._id, res);
+    await user.save();
 
-      res.status(201).json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        username: newUser.username
-      });
-
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
+    const payload = {
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email
     }
+
+    generateToken(payload, res);
+
+    res.status(201).json({
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email
+    });
 
   } catch (error) {
     console.log('Error in signup controller', error);
@@ -87,5 +101,5 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
   res.cookie('jwt', '', { maxAge: 0 });
-  res.status(200).json({ message: 'Logged out successfully'});
+  res.status(200).json({ message: 'Logged out successfully' });
 }
