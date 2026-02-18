@@ -56,6 +56,7 @@ export const registerUser = async (req, res) => {
     await newUser.save();
 
     const payload = {
+      _id: newUser._id,
       fullName: newUser.fullName,
       username: newUser.username,
       email: newUser.email
@@ -86,6 +87,7 @@ export const loginUser = async (req, res) => {
     if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
 
     const payload = {
+      _id: user._id,
       fullName: user.fullName,
       username: user.username,
       email: user.email
