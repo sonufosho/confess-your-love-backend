@@ -55,14 +55,7 @@ export const registerUser = async (req, res) => {
 
     await newUser.save();
 
-    const payload = {
-      _id: newUser._id,
-      fullName: newUser.fullName,
-      username: newUser.username,
-      email: newUser.email
-    }
-
-    generateToken(payload, res);
+    generateToken(newUser, res);
 
     res.status(201).json({
       fullName: newUser.fullName,
@@ -86,13 +79,7 @@ export const loginUser = async (req, res) => {
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const payload = {
-      _id: user._id,
-      fullName: user.fullName,
-      username: user.username,
-      email: user.email
-    }
-    generateToken(payload, res);
+    generateToken(user, res);
 
     res.status(200).json({
       fullName: user.fullName,
