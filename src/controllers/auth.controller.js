@@ -2,6 +2,16 @@ import bcrypt from 'bcrypt';
 import User from "../models/user.model.js";
 import generateToken from '../utils/generateToken.js';
 
+export const status = async (req, res) => {
+  const user = req.user;
+
+  res.status(200).json({
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email
+  });
+}
+
 export const registerUser = async (req, res) => {
   const { fullName, username, email, password } = req.body;
 
