@@ -14,6 +14,10 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  crushGender: {
+    type: String,
+    required: true
+  },
   relationshipType: {
     type: String,
     required: true
@@ -29,6 +33,9 @@ const profileSchema = new mongoose.Schema({
   thirdHobby: {
     type: String,
     required: true
+  },
+  photo: {
+    type: String
   },
   message: {
     type: String
