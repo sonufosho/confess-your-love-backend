@@ -5,7 +5,7 @@ export const userProfile = async (req, res) => {
   const { username } = req.params;
 
   const user = req.user;
-  
+
   if (user.username !== username) return res.status(404).json({ message: 'User not found' });
 
   res.status(200).json({
@@ -16,15 +16,15 @@ export const userProfile = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-  const { yourName, crushName, relationshipType, firstHobby, secondHobby, thirdHobby, message } = req.body;
+  const { yourName, crushName, crushGender, relationshipType, firstHobby, secondHobby, thirdHobby, photo, message } = req.body;
 
   try {
-    if (!yourName || !crushName || !relationshipType || !firstHobby || !secondHobby || !thirdHobby || !message) {
+    if (!yourName || !crushName || !crushGender || !relationshipType || !firstHobby || !secondHobby || !thirdHobby) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
     // Check if name is greater than 3 characters
-    if (yourName.length < 3 || crushName.length < 3) {
+    if (yourName.length < 3 && crushName.length < 3) {
       return res.status(400).json({ message: 'Name must be at least 3 characters' });
     }
 
@@ -37,10 +37,12 @@ export const updateProfile = async (req, res) => {
       // Update existing profile
       profile.yourName = yourName;
       profile.crushName = crushName;
+      profile.crushGender = crushGender;
       profile.relationshipType = relationshipType;
       profile.firstHobby = firstHobby;
       profile.secondHobby = secondHobby;
       profile.thirdHobby = thirdHobby;
+      profile.photo = photo;
       profile.message = message;
 
       await profile.save();
@@ -48,10 +50,12 @@ export const updateProfile = async (req, res) => {
       res.status(200).json({
         yourName: profile.yourName,
         crushName: profile.crushName,
+        crushGender: profile.crushGender,
         relationshipType: profile.relationshipType,
         firstHobby: profile.firstHobby,
         secondHobby: profile.secondHobby,
         thirdHobby: profile.thirdHobby,
+        photo: profile.photo,
         message: profile.message
       });
 
@@ -61,10 +65,12 @@ export const updateProfile = async (req, res) => {
         _id: user._id,
         yourName,
         crushName,
+        crushGender,
         relationshipType,
         firstHobby,
         secondHobby,
         thirdHobby,
+        photo,
         message
       });
 
@@ -73,10 +79,12 @@ export const updateProfile = async (req, res) => {
       res.status(201).json({
         yourName: newProfile.yourName,
         crushName: newProfile.crushName,
-        relationshipType: profile.relationshipType,
+        crushGender: newProfile.crushGender,
+        relationshipType: newProfile.relationshipType,
         firstHobby: newProfile.firstHobby,
         secondHobby: newProfile.secondHobby,
         thirdHobby: newProfile.thirdHobby,
+        photo: newProfile.photo,
         message: newProfile.message
       });
     }
@@ -101,10 +109,12 @@ export const confess = async (req, res) => {
   res.status(201).json({
     yourName: profile.yourName,
     crushName: profile.crushName,
+    crushGender: profile.crushGender,
     relationshipType: profile.relationshipType,
     firstHobby: profile.firstHobby,
     secondHobby: profile.secondHobby,
     thirdHobby: profile.thirdHobby,
+    photo: profile.photo,
     message: profile.message
   });
 }
